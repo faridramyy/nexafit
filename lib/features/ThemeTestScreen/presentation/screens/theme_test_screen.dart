@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ThemeTestScreen extends StatefulWidget {
-  const ThemeTestScreen({Key? key}) : super(key: key);
+  const ThemeTestScreen({super.key});
 
   @override
   State<ThemeTestScreen> createState() => _ThemeTestScreenState();
@@ -217,9 +217,68 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
             const LinearProgressIndicator(value: 0.7),
             spacing,
             const CircularProgressIndicator(),
+            const SizedBox(height: 32),
+            const Text(
+              '🎨 Theme Colors',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            ..._buildColorSwatches(context),
           ],
         ),
       ),
     );
+  }
+
+  List<Widget> _buildColorSwatches(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final colors = <String, Color>{
+      'primary': colorScheme.primary,
+      'onPrimary': colorScheme.onPrimary,
+      'primaryContainer': colorScheme.primaryContainer,
+      'onPrimaryContainer': colorScheme.onPrimaryContainer,
+      'secondary': colorScheme.secondary,
+      'onSecondary': colorScheme.onSecondary,
+      'secondaryContainer': colorScheme.secondaryContainer,
+      'onSecondaryContainer': colorScheme.onSecondaryContainer,
+      'tertiary': colorScheme.tertiary,
+      'onTertiary': colorScheme.onTertiary,
+      'tertiaryContainer': colorScheme.tertiaryContainer,
+      'onTertiaryContainer': colorScheme.onTertiaryContainer,
+      'surface': colorScheme.surface,
+      'onSurface': colorScheme.onSurface,
+      'surfaceVariant': colorScheme.surfaceContainerHighest,
+      'onSurfaceVariant': colorScheme.onSurfaceVariant,
+      'error': colorScheme.error,
+      'onError': colorScheme.onError,
+      'outline': colorScheme.outline,
+      'outlineVariant': colorScheme.outlineVariant,
+      'inverseSurface': colorScheme.inverseSurface,
+      'onInverseSurface': colorScheme.onInverseSurface,
+      'inversePrimary': colorScheme.inversePrimary,
+      'shadow': colorScheme.shadow,
+      'scrim': colorScheme.scrim,
+    };
+
+    return colors.entries.map((entry) {
+      return Container(
+        height: 40,
+        color: entry.value,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        alignment: Alignment.centerLeft,
+        child: Text(
+          entry.key,
+          style: TextStyle(
+            color:
+                ThemeData.estimateBrightnessForColor(entry.value) ==
+                        Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
+    }).toList();
   }
 }

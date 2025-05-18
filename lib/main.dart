@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nexafit/core/theme/theme.dart';
-import 'package:nexafit/features/ThemeTestScreen/presentation/screens/theme_test_screen.dart';
+// import 'package:nexafit/features/ThemeTestScreen/presentation/screens/theme_test_screen.dart';
 import 'package:nexafit/features/onboarding/presentation/screens/onboarding_screen.dart';
 
 void main() {
@@ -16,7 +16,8 @@ class MyApp extends StatelessWidget {
       title: 'Nexafit',
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      home: const ThemeTestScreen(),
+      // home: const ThemeTestScreen(),
+      home: const OnBoarding(),
     );
   }
 }
