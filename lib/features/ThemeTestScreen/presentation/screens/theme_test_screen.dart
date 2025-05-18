@@ -12,8 +12,10 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
   bool _checkboxValue = false;
   double _sliderValue = 0.5;
   String _dropdownValue = 'Beginner';
-  final TextEditingController _controller = TextEditingController();
   int _selectedSegment = 0;
+  int? _radioValue = 1;
+
+  final TextEditingController _controller = TextEditingController();
 
   final Map<int, Widget> _segments = const {
     0: Text('Free'),
@@ -21,9 +23,12 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
   };
 
   void _showSnackbar() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('This is a themed Snackbar!')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('This is a themed Snackbar!'),
+        action: SnackBarAction(label: 'Undo', onPressed: () {}),
+      ),
+    );
   }
 
   void _showModalDialog() {
@@ -32,9 +37,7 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
       builder:
           (_) => AlertDialog(
             title: const Text('NexaFit Modal'),
-            content: const Text(
-              'This is a modal dialog. You can use it for confirmations or info.',
-            ),
+            content: const Text('This is a modal dialog.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -49,37 +52,65 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
     );
   }
 
+  void _showBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder:
+          (_) => Container(
+            padding: const EdgeInsets.all(16),
+            child: const Text('This is a bottom sheet.'),
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = const SizedBox(height: 16);
+    final sectionSpacing = const SizedBox(height: 24);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('NexaFit Theme Test'),
         centerTitle: true,
+        actions: [
+          PopupMenuButton<String>(
+            itemBuilder:
+                (context) => [
+                  const PopupMenuItem(
+                    value: 'settings',
+                    child: Text('Settings'),
+                  ),
+                  const PopupMenuItem(value: 'about', child: Text('About')),
+                ],
+            onSelected: (value) {
+              if (value == 'about') _showModalDialog();
+            },
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showBottomSheet,
+        tooltip: 'Bottom Sheet',
+        child: const Icon(Icons.expand_less),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '🎨 Text Styles',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'HeadlineSmall',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            Text('TitleMedium', style: Theme.of(context).textTheme.titleMedium),
-            Text('BodyMedium', style: Theme.of(context).textTheme.bodyMedium),
-            const SizedBox(height: 16),
+            Text('🎨 Text Styles', style: theme.textTheme.titleLarge),
+            spacing,
+            Text('DisplayLarge', style: theme.textTheme.displayLarge),
+            Text('HeadlineSmall', style: theme.textTheme.headlineSmall),
+            Text('TitleMedium', style: theme.textTheme.titleMedium),
+            Text('BodyMedium', style: theme.textTheme.bodyMedium),
+            sectionSpacing,
 
             const Divider(),
 
-            const Text(
-              '🔘 Buttons',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
+            Text('🔘 Buttons', style: theme.textTheme.titleLarge),
+            spacing,
             Wrap(
               spacing: 10,
               runSpacing: 10,
@@ -91,28 +122,6 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
                 OutlinedButton(onPressed: () {}, child: const Text('Outlined')),
                 TextButton(onPressed: () {}, child: const Text('Text')),
                 FilledButton(onPressed: () {}, child: const Text('Filled')),
-
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.fitness_center),
-                  label: const Text('Elevated Icon'),
-                ),
-                OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.directions_run),
-                  label: const Text('Outlined Icon'),
-                ),
-                TextButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text('Text Icon'),
-                ),
-                FilledButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.local_fire_department),
-                  label: const Text('Filled Icon'),
-                ),
-
                 IconButton(
                   icon: const Icon(Icons.favorite),
                   onPressed: () {},
@@ -120,68 +129,29 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            sectionSpacing,
 
-            const Text(
-              '📦 Cards',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
+            Text('📦 Cards', style: theme.textTheme.titleLarge),
+            spacing,
             Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
               child: ListTile(
-                leading: const Icon(Icons.accessibility_new, size: 32),
+                leading: const Icon(Icons.fitness_center),
                 title: const Text('AI Trainer'),
-                subtitle: const Text('Personalized plans based on your data.'),
-                trailing: ElevatedButton(
+                trailing: FilledButton(
                   onPressed: () {},
-                  child: const Text('Try Now'),
+                  child: const Text('Try'),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            Card(
-              color: Theme.of(context).colorScheme.secondaryContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Meal Prep Plan',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text('AI-generated meals and booking options.'),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        FilledButton(
-                          onPressed: () {},
-                          child: const Text('Book'),
-                        ),
-                        const SizedBox(width: 8),
-                        TextButton(
-                          onPressed: _showModalDialog,
-                          child: const Text('More Info'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            spacing,
+            Chip(
+              label: const Text('Workout'),
+              avatar: const Icon(Icons.run_circle),
             ),
+            sectionSpacing,
 
-            const SizedBox(height: 24),
-            const Text(
-              '📩 Inputs & Toggles',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-
+            Text('📩 Inputs & Toggles', style: theme.textTheme.titleLarge),
+            spacing,
             TextField(
               controller: _controller,
               decoration: const InputDecoration(
@@ -189,8 +159,7 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
-
+            spacing,
             DropdownButton<String>(
               value: _dropdownValue,
               items:
@@ -201,37 +170,37 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
                       .toList(),
               onChanged: (val) => setState(() => _dropdownValue = val!),
             ),
-            const SizedBox(height: 16),
-
+            spacing,
             Slider(
               value: _sliderValue,
-              min: 0,
-              max: 1,
-              divisions: 10,
-              label: '${(_sliderValue * 100).toStringAsFixed(0)}%',
               onChanged: (val) => setState(() => _sliderValue = val),
             ),
-            Row(
-              children: [
-                Checkbox(
-                  value: _checkboxValue,
-                  onChanged: (val) => setState(() => _checkboxValue = val!),
-                ),
-                const Text('I accept the terms'),
-              ],
+            SwitchListTile(
+              title: const Text('Enable Notifications'),
+              value: _switchValue,
+              onChanged: (val) => setState(() => _switchValue = val),
             ),
-            Row(
-              children: [
-                const Text('Dark Mode:'),
-                Switch(
-                  value: _switchValue,
-                  onChanged: (val) => setState(() => _switchValue = val),
-                ),
-              ],
+            CheckboxListTile(
+              title: const Text('I accept the terms'),
+              value: _checkboxValue,
+              onChanged: (val) => setState(() => _checkboxValue = val!),
             ),
+            RadioListTile<int>(
+              title: const Text('Free Plan'),
+              value: 1,
+              groupValue: _radioValue,
+              onChanged: (val) => setState(() => _radioValue = val),
+            ),
+            RadioListTile<int>(
+              title: const Text('Premium Plan'),
+              value: 2,
+              groupValue: _radioValue,
+              onChanged: (val) => setState(() => _radioValue = val),
+            ),
+            sectionSpacing,
 
-            const SizedBox(height: 24),
-            const Text('🔘 Segmented Buttons'),
+            Text('🔘 Segmented Buttons', style: theme.textTheme.titleLarge),
+            spacing,
             SegmentedButton<int>(
               segments:
                   _segments.entries
@@ -241,12 +210,12 @@ class _ThemeTestScreenState extends State<ThemeTestScreen> {
               onSelectionChanged:
                   (val) => setState(() => _selectedSegment = val.first),
             ),
+            sectionSpacing,
 
-            const SizedBox(height: 24),
-            const Text('⏳ Progress Indicators'),
-            const SizedBox(height: 8),
+            Text('⏳ Progress Indicators', style: theme.textTheme.titleLarge),
+            spacing,
             const LinearProgressIndicator(value: 0.7),
-            const SizedBox(height: 8),
+            spacing,
             const CircularProgressIndicator(),
           ],
         ),
