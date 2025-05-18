@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
+import 'package:nexafit/core/constants/app_routes.dart';
 
 class OnBoarding extends StatelessWidget {
   const OnBoarding({super.key});
@@ -13,6 +14,10 @@ class OnBoarding extends StatelessWidget {
         finishButtonText: 'Register',
         skipTextButton: Text('Skip'),
         trailing: Text('Login'),
+        trailingFunction:
+            () => Navigator.pushReplacementNamed(context, AppRoutes.login),
+        onFinish:
+            () => Navigator.pushReplacementNamed(context, AppRoutes.signup),
         centerBackground: true,
         indicatorAbove: true,
         background: [
@@ -68,7 +73,7 @@ class OnBoarding extends StatelessWidget {
           ),
         ],
         totalPage: 5,
-        speed: 1.8,
+        speed: 3,
         pageBodies: [
           pageBody(
             "Welcome to NexaFit – your AI-powered fitness companion.",
@@ -79,11 +84,11 @@ class OnBoarding extends StatelessWidget {
             context,
           ),
           pageBody(
-            "Plan your meals smartly with AI-driven diet suggestions and tracking.",
+            "Track every rep, set, and milestone to see your true progress.",
             context,
           ),
           pageBody(
-            "Track every rep, set, and milestone to see your true progress.",
+            "Plan your meals smartly with AI-driven diet suggestions and tracking.",
             context,
           ),
           pageBody(
