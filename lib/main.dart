@@ -13,6 +13,7 @@ import 'package:nexafit/features/onboarding/presentation/screens/onboarding_scre
 import 'package:nexafit/features/profile/presentation/screens/profile_screen.dart';
 import 'package:nexafit/features/workouts/presentation/screens/workouts_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:ui'; // For BackdropFilter
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -86,42 +87,70 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
-          boxShadow: [
-            BoxShadow(blurRadius: 20, color: Colors.black.withAlpha(30)),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-            child: GNav(
-              rippleColor: Theme.of(context).colorScheme.primary,
-              hoverColor: Theme.of(context).colorScheme.primary,
-              gap: 8,
-              activeColor: Theme.of(context).colorScheme.onPrimary,
-              iconSize: 24,
-              duration: Duration(milliseconds: 50),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              tabBackgroundColor: Theme.of(context).colorScheme.primary,
-              color: Theme.of(context).colorScheme.inverseSurface,
-              tabs: [
-                GButton(icon: FontAwesomeIcons.comments, text: 'Chat'),
-                GButton(icon: FontAwesomeIcons.dumbbell, text: 'Workouts'),
-                GButton(icon: FontAwesomeIcons.utensils, text: 'Meals'),
-                GButton(icon: FontAwesomeIcons.user, text: 'Profile'),
-              ],
-              selectedIndex: _selectedIndex,
-              onTabChange: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
+      extendBody: true,
+      body: Stack(
+        children: [
+          _widgetOptions.elementAt(_selectedIndex),
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 25,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 15,
+                        color: Colors.black,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0,
+                      vertical: 8,
+                    ),
+                    child: GNav(
+                      rippleColor: Theme.of(context).colorScheme.primary,
+                      hoverColor: Theme.of(context).colorScheme.primary,
+                      gap: 8,
+                      activeColor: Theme.of(context).colorScheme.onPrimary,
+                      iconSize: 20,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      duration: Duration(milliseconds: 300),
+                      tabBackgroundColor: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.inverseSurface,
+                      tabs: [
+                        GButton(icon: FontAwesomeIcons.comments, text: 'Chat'),
+                        GButton(
+                          icon: FontAwesomeIcons.dumbbell,
+                          text: 'Workouts',
+                        ),
+                        GButton(icon: FontAwesomeIcons.utensils, text: 'Meals'),
+                        GButton(icon: FontAwesomeIcons.user, text: 'Profile'),
+                      ],
+                      selectedIndex: _selectedIndex,
+                      onTabChange: (index) {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
