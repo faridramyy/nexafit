@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:nexafit/core/constants/app_routes.dart';
 import 'package:nexafit/core/theme/theme.dart';
@@ -6,7 +7,11 @@ import 'package:nexafit/features/ThemeTestScreen/presentation/screens/theme_test
 import 'package:nexafit/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:nexafit/features/auth/presentation/screens/login_screen.dart';
 import 'package:nexafit/features/auth/presentation/screens/signup_screen.dart';
+import 'package:nexafit/features/chat/presentation/screens/chat_screen.dart';
+import 'package:nexafit/features/meals/presentation/screens/meals_screen.dart';
 import 'package:nexafit/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:nexafit/features/profile/presentation/screens/profile_screen.dart';
+import 'package:nexafit/features/workouts/presentation/screens/workouts_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -70,27 +75,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle = TextStyle(
-    fontSize: 30,
-    fontWeight: FontWeight.w600,
-  );
 
   static const List<Widget> _widgetOptions = <Widget>[
-    Text('Home', style: optionStyle),
-    Text('Likes', style: optionStyle),
-    Text('Search', style: optionStyle),
-    Text('Profile', style: optionStyle),
+    ChatScreen(),
+    WorkoutsScreen(),
+    MealsScreen(),
+    ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(elevation: 20, title: const Text('GoogleNavBar')),
       body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondary,
           boxShadow: [
             BoxShadow(blurRadius: 20, color: Colors.black.withAlpha(30)),
           ],
@@ -99,20 +98,20 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
             child: GNav(
-              rippleColor: Colors.grey[300]!,
-              hoverColor: Colors.grey[100]!,
+              rippleColor: Theme.of(context).colorScheme.primary,
+              hoverColor: Theme.of(context).colorScheme.primary,
               gap: 8,
-              activeColor: Colors.black,
+              activeColor: Theme.of(context).colorScheme.onPrimary,
               iconSize: 24,
+              duration: Duration(milliseconds: 50),
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              duration: Duration(milliseconds: 400),
-              tabBackgroundColor: Colors.grey[100]!,
-              color: Colors.black,
+              tabBackgroundColor: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.inverseSurface,
               tabs: [
-                GButton(icon: Icons.home, text: 'Home'),
-                GButton(icon: Icons.favorite, text: 'Likes'),
-                GButton(icon: Icons.search, text: 'Search'),
-                GButton(icon: Icons.usb_rounded, text: 'Profile'),
+                GButton(icon: FontAwesomeIcons.comments, text: 'Chat'),
+                GButton(icon: FontAwesomeIcons.dumbbell, text: 'Workouts'),
+                GButton(icon: FontAwesomeIcons.utensils, text: 'Meals'),
+                GButton(icon: FontAwesomeIcons.user, text: 'Profile'),
               ],
               selectedIndex: _selectedIndex,
               onTabChange: (index) {
