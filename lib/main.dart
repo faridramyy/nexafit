@@ -13,7 +13,7 @@ import 'package:nexafit/features/onboarding/presentation/screens/onboarding_scre
 import 'package:nexafit/features/profile/presentation/screens/profile_screen.dart';
 import 'package:nexafit/features/workouts/presentation/screens/workouts_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:ui'; // For BackdropFilter
+import 'dart:ui';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
