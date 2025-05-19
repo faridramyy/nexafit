@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:nexafit/core/constants/app_routes.dart';
 import 'package:nexafit/core/theme/theme.dart';
 import 'package:nexafit/features/ThemeTestScreen/presentation/screens/theme_test_screen.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       title: 'Nexafit',
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      initialRoute: AppRoutes.onboarding,
+      home: const AuthGate(),
       routes: {
         AppRoutes.themeTest: (_) => const ThemeTestScreen(),
         AppRoutes.onboarding: (_) => const OnBoarding(),
@@ -37,6 +38,92 @@ class MyApp extends StatelessWidget {
         AppRoutes.signup: (_) => const SignUpScreen(),
         AppRoutes.forgotPassword: (_) => const ForgetPasswordScreen(),
       },
+    );
+  }
+}
+
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<AuthState>(
+      stream: Supabase.instance.client.auth.onAuthStateChange,
+      builder: (context, snapshot) {
+        final session = Supabase.instance.client.auth.currentSession;
+        if (session != null) {
+          return const HomeScreen();
+        } else {
+          return const LoginScreen();
+        }
+      },
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle = TextStyle(
+    fontSize: 30,
+    fontWeight: FontWeight.w600,
+  );
+
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text('Home', style: optionStyle),
+    Text('Likes', style: optionStyle),
+    Text('Search', style: optionStyle),
+    Text('Profile', style: optionStyle),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(elevation: 20, title: const Text('GoogleNavBar')),
+      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(blurRadius: 20, color: Colors.black.withAlpha(30)),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+            child: GNav(
+              rippleColor: Colors.grey[300]!,
+              hoverColor: Colors.grey[100]!,
+              gap: 8,
+              activeColor: Colors.black,
+              iconSize: 24,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              duration: Duration(milliseconds: 400),
+              tabBackgroundColor: Colors.grey[100]!,
+              color: Colors.black,
+              tabs: [
+                GButton(icon: Icons.home, text: 'Home'),
+                GButton(icon: Icons.favorite, text: 'Likes'),
+                GButton(icon: Icons.search, text: 'Search'),
+                GButton(icon: Icons.usb_rounded, text: 'Profile'),
+              ],
+              selectedIndex: _selectedIndex,
+              onTabChange: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

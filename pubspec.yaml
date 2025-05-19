@@ -37,6 +37,7 @@ dependencies:
   flutter_onboarding_slider: ^1.0.11
   flex_color_scheme: ^8.2.0
   supabase_flutter: ^2.0.0
+  google_nav_bar: ^5.0.7
 
 dev_dependencies:
   flutter_test:

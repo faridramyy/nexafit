@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
 import 'package:nexafit/core/constants/app_routes.dart';
@@ -8,8 +7,8 @@ class OnBoarding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
-      home: OnBoardingSlider(
+    return Scaffold(
+      body: OnBoardingSlider(
         headerBackgroundColor: Theme.of(context).colorScheme.surface,
         finishButtonText: 'Register',
         skipTextButton: Text('Skip'),
