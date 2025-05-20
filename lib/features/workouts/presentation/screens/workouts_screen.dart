@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nexafit/features/workouts/presentation/screens/create_routine_sheet.dart';
 import 'package:nexafit/features/workouts/presentation/widgets/primary_button.dart';
 import 'package:nexafit/features/workouts/presentation/widgets/routine_card.dart';
 import 'package:nexafit/features/workouts/presentation/widgets/section_title.dart';
@@ -35,7 +36,16 @@ class WorkoutsScreen extends StatelessWidget {
                   child: PrimaryButton(
                     icon: Icons.add_box_outlined,
                     label: 'New Routine',
-                    onPressed: () {},
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) {
+                          return const CreateRoutineSheet();
+                        },
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),
