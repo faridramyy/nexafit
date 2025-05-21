@@ -79,10 +79,10 @@ class WorkoutsScreen extends StatelessWidget {
                     exercises:
                         'Bench Press (Dumbbell), Incline Chest Press, Dumbbell Fly',
                   ),
+                  SizedBox(height: 50),
                 ],
               ),
             ),
-            const SizedBox(height: 50),
           ],
         ),
       ),

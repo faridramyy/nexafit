@@ -29,7 +29,7 @@ class CreateRoutineSheet extends StatelessWidget {
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
-                      color: Colors.grey[600],
+                      color: Theme.of(context).colorScheme.outline,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
