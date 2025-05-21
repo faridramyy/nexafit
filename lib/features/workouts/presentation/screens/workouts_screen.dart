@@ -40,10 +40,7 @@ class WorkoutsScreen extends StatelessWidget {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) {
-                          return const CreateRoutineSheet();
-                        },
+                        builder: (_) => const CreateRoutineSheet(),
                       );
                     },
                   ),

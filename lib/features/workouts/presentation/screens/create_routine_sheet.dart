@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nexafit/features/workouts/presentation/screens/add_exercise_sheet.dart';
 
 class CreateRoutineSheet extends StatelessWidget {
   const CreateRoutineSheet({super.key});
@@ -6,7 +7,7 @@ class CreateRoutineSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.75,
+      initialChildSize: 0.5,
       minChildSize: 0.5,
       maxChildSize: 0.95,
       expand: false,
@@ -68,18 +69,24 @@ class CreateRoutineSheet extends StatelessWidget {
                   const SizedBox(height: 16),
                   // Title Field
                   TextField(
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Routine title',
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      border: const UnderlineInputBorder(),
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      filled: true,
+                      fillColor:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 40),
                   // Empty State
                   Column(
@@ -99,7 +106,12 @@ class CreateRoutineSheet extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton.icon(
-                          onPressed: () {},
+                          onPressed:
+                              () => showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (_) => const AddExerciseSheet(),
+                              ),
                           icon: const Icon(Icons.add),
                           label: const Text('Add exercise'),
                         ),
