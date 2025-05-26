@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nexafit/features/workouts/presentation/screens/create_routine_sheet.dart';
+import 'package:nexafit/features/workouts/presentation/screens/workout_log_screen.dart';
 import 'package:nexafit/features/workouts/presentation/widgets/primary_button.dart';
 import 'package:nexafit/features/workouts/presentation/widgets/routine_card.dart';
 import 'package:nexafit/features/workouts/presentation/widgets/section_title.dart';
@@ -60,23 +61,31 @@ class WorkoutsScreen extends StatelessWidget {
             const SizedBox(height: 12),
             Expanded(
               child: ListView(
-                children: const [
+                children: [
                   RoutineCard(
                     title: 'Arms',
-                    exercises:
-                        'Bicep Curl (Dumbbell), Triceps Pushdown, Seated Incline Curl (Dumbbell)',
+                    exercises: 'Bicep Curl, Triceps Pushdown, Seated Curl',
+                    onStartPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WorkoutLogScreen(),
+                        ),
+                      );
+                    },
                   ),
                   RoutineCard(
                     title: 'Back',
-                    exercises:
-                        'Seated Cable Row - Bar Wide Grip, T Bar Row, Rear Delt Reverse Fly (Machine)',
+                    exercises: 'Cable Row, T-Bar Row',
+                    onStartPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WorkoutLogScreen(),
+                        ),
+                      );
+                    },
                   ),
-                  RoutineCard(
-                    title: 'Upper',
-                    exercises:
-                        'Bench Press (Dumbbell), Incline Chest Press, Dumbbell Fly',
-                  ),
-                  SizedBox(height: 50),
                 ],
               ),
             ),

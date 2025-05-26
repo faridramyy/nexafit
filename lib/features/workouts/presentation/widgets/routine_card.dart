@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class RoutineCard extends StatelessWidget {
   final String title;
   final String exercises;
+  final VoidCallback onStartPressed;
 
-  const RoutineCard({required this.title, required this.exercises, super.key});
+  const RoutineCard({
+    required this.title,
+    required this.exercises,
+    required this.onStartPressed,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +19,6 @@ class RoutineCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16.0, 10, 16.0, 16.0),
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -31,59 +36,15 @@ class RoutineCard extends StatelessWidget {
                   ),
                 ),
                 PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.more_vert,
-                    color: Theme.of(context).colorScheme.onSecondary,
-                  ),
+                  icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSecondary),
                   onSelected: (value) {
-                    switch (value) {
-                      case 'duplicate':
-                        // Handle duplicate
-                        break;
-                      case 'edit':
-                        // Handle edit
-                        break;
-                      case 'delete':
-                        // Handle delete
-                        break;
-                    }
+                    // handle popup actions
                   },
-                  itemBuilder:
-                      (context) => [
-                        const PopupMenuItem(
-                          value: 'duplicate',
-                          child: Row(
-                            children: [
-                              Icon(Icons.copy, size: 20),
-                              SizedBox(width: 10),
-                              Text('Duplicate'),
-                            ],
-                          ),
-                        ),
-                        const PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit, size: 20),
-                              SizedBox(width: 10),
-                              Text('Edit'),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: const [
-                              Icon(Icons.delete, size: 20, color: Colors.red),
-                              SizedBox(width: 10),
-                              Text(
-                                'Delete',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(value: 'duplicate', child: Text('Duplicate')),
+                    const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                    const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  ],
                 ),
               ],
             ),
@@ -98,7 +59,7 @@ class RoutineCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: () {},
+                onPressed: onStartPressed,
                 child: const Text('Start Routine'),
               ),
             ),
