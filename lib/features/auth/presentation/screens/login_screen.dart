@@ -49,8 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
           const SnackBar(content: Text("Login successful!")),
         );
 
-        await Future.delayed(const Duration(seconds: 1));
-        // Navigate to the home screen
+        Navigator.pushNamed(context, AppRoutes.home);
       }
     } on AuthException catch (e) {
       if (!mounted) return;

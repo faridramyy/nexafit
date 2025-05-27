@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nexafit/core/constants/app_routes.dart';
 import 'package:nexafit/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -21,32 +23,25 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Avatar & Name
             const CircleAvatar(
               radius: 50,
-              // backgroundImage: AssetImage(
-              //   'assets/images/avatar_placeholder.png',
-              // ),
+              // backgroundImage: AssetImage('assets/images/avatar_placeholder.png'),
             ),
             const SizedBox(height: 12),
             const Text(
-              'Mostafa Hady',
+              'Farid Ramy',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const Text(
-              'mostafa@email.com',
+              'faridramy2003@gmail.com',
               style: TextStyle(color: Colors.grey),
             ),
-
             const SizedBox(height: 24),
-
-            // Activity stats
             const Text(
               'Activity Overview',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -60,10 +55,7 @@ class ProfileScreen extends StatelessWidget {
                 _StatCard(title: 'Challenges', value: '8'),
               ],
             ),
-
             const SizedBox(height: 32),
-
-            // Settings & Options
             const Divider(height: 32),
             const _ProfileOption(icon: Icons.settings, label: 'Settings'),
             const _ProfileOption(
@@ -79,10 +71,39 @@ class ProfileScreen extends StatelessWidget {
               icon: Icons.help_outline,
               label: 'Help & Support',
             ),
-            const _ProfileOption(
+
+            // ✅ Logout button with Supabase
+            _ProfileOption(
               icon: Icons.logout,
               label: 'Logout',
               iconColor: Colors.red,
+              onTap: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder:
+                      (context) => AlertDialog(
+                        title: const Text("Confirm Logout"),
+                        content: const Text("Are you sure you want to logout?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text("Logout"),
+                          ),
+                        ],
+                      ),
+                );
+
+                if (confirm == true) {
+                  final supabase = Supabase.instance.client;
+                  await supabase.auth.signOut();
+
+                  Navigator.pushNamed(context, AppRoutes.login);
+                }
+              },
             ),
           ],
         ),
@@ -116,11 +137,13 @@ class _ProfileOption extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color? iconColor;
+  final VoidCallback? onTap;
 
   const _ProfileOption({
     required this.icon,
     required this.label,
     this.iconColor,
+    this.onTap,
   });
 
   @override
@@ -131,7 +154,7 @@ class _ProfileOption extends StatelessWidget {
         color: iconColor ?? Theme.of(context).iconTheme.color,
       ),
       title: Text(label),
-      onTap: () {},
+      onTap: onTap,
     );
   }
 }
