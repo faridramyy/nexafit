@@ -186,6 +186,24 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                                 }
                               }
                             },
+                            onDeletePressed: () async {
+                              try {
+                                await _workoutService.deleteRoutine(
+                                  routine['id'],
+                                );
+                                _loadRoutines(); // Reload the list after deletion
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Error deleting routine: $e',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
                           );
                         },
                       ),

@@ -4,11 +4,13 @@ class RoutineCard extends StatelessWidget {
   final String title;
   final String exercises;
   final VoidCallback onStartPressed;
+  final VoidCallback onDeletePressed;
 
   const RoutineCard({
     required this.title,
     required this.exercises,
     required this.onStartPressed,
+    required this.onDeletePressed,
     super.key,
   });
 
@@ -36,15 +38,49 @@ class RoutineCard extends StatelessWidget {
                   ),
                 ),
                 PopupMenuButton<String>(
-                  icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSecondary),
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
                   onSelected: (value) {
-                    // handle popup actions
+                    if (value == 'delete') {
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              title: const Text('Delete Routine'),
+                              content: Text(
+                                'Are you sure you want to delete "$title"?',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Cancel'),
+                                ),
+                                FilledButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    onDeletePressed();
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                      );
+                    }
                   },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'duplicate', child: Text('Duplicate')),
-                    const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    const PopupMenuItem(value: 'delete', child: Text('Delete')),
-                  ],
+                  itemBuilder:
+                      (context) => [
+                        const PopupMenuItem(
+                          value: 'duplicate',
+                          child: Text('Duplicate'),
+                        ),
+                        const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Text('Delete'),
+                        ),
+                      ],
                 ),
               ],
             ),

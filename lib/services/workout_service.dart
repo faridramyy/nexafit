@@ -65,6 +65,22 @@ class WorkoutService {
     }
   }
 
+  Future<void> deleteRoutine(String routineId) async {
+    try {
+      // Delete routine exercises first (due to foreign key constraint)
+      await client
+          .from('routine_exercises')
+          .delete()
+          .eq('routine_id', routineId);
+
+      // Then delete the routine
+      await client.from('workout_routines').delete().eq('id', routineId);
+    } catch (e) {
+      print('Error deleting routine: $e');
+      rethrow;
+    }
+  }
+
   // Workouts
   Future<String> createWorkout({
     required DateTime date,

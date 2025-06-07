@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nexafit/services/workout_service.dart';
+import 'package:nexafit/widgets/add_exercise_tile.dart';
 
 class AddExerciseSheet extends StatefulWidget {
   final List<String> initialSelectedExercises;
@@ -172,6 +172,7 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
                                           exercise['body_part'] ?? 'Unknown',
                                       isSelected: isSelected,
                                       gifUrl: _getGifUrl(exercise['gif_url']),
+                                      exercise: exercise,
                                     ),
                                   );
                                 },
@@ -210,71 +211,6 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
         padding: const EdgeInsets.symmetric(vertical: 12),
       ),
       child: Text(label),
-    );
-  }
-}
-
-class ExerciseTile extends StatelessWidget {
-  final String name;
-  final String muscle;
-  final bool isSelected;
-  final String gifUrl;
-
-  const ExerciseTile({
-    super.key,
-    required this.name,
-    required this.muscle,
-    required this.isSelected,
-    required this.gifUrl,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        border:
-            isSelected
-                ? Border(
-                  left: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 4,
-                  ),
-                )
-                : null,
-        color: Theme.of(context).colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          backgroundImage: gifUrl.isNotEmpty ? NetworkImage(gifUrl) : null,
-          child:
-              gifUrl.isEmpty
-                  ? const Icon(Icons.fitness_center, size: 20)
-                  : null,
-        ),
-        title: Text(
-          name,
-          style: TextStyle(
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        subtitle: Text(
-          muscle,
-          style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-        trailing: Icon(
-          FontAwesomeIcons.circleInfo,
-          size: 16,
-          color: Theme.of(context).colorScheme.outline,
-        ),
-      ),
     );
   }
 }
