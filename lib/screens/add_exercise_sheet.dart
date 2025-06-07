@@ -4,7 +4,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nexafit/services/workout_service.dart';
 
 class AddExerciseSheet extends StatefulWidget {
-  const AddExerciseSheet({super.key});
+  final List<String> initialSelectedExercises;
+
+  const AddExerciseSheet({super.key, this.initialSelectedExercises = const []});
 
   @override
   State<AddExerciseSheet> createState() => _AddExerciseSheetState();
@@ -22,6 +24,7 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
   @override
   void initState() {
     super.initState();
+    _selectedExercises.addAll(widget.initialSelectedExercises);
     _loadExercises();
   }
 
