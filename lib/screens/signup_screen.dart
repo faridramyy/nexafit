@@ -51,20 +51,47 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (!mounted) return;
 
       if (response.user != null) {
+        // Update username in profiles table
+        final userId = response.user!.id;
+        await Supabase.instance.client
+            .from('profiles')
+            .update({'username': _usernameController.text.trim()})
+            .eq('id', userId);
         messenger.showSnackBar(
           const SnackBar(
             content: Text("Sign up successful! Please check your email."),
           ),
         );
-
-        await Future.delayed(const Duration(seconds: 2));
-        // Navigate to the home screen
+        await showDialog(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: const Text('Verify your email'),
+                content: const Text(
+                  'A confirmation link has been sent to your email. Please verify your email, then log in.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('OK'),
+                  ),
+                ],
+              ),
+        );
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, AppRoutes.login);
+        }
       }
     } on AuthException catch (e) {
       if (!mounted) return;
       final errorMsg = e.message;
+      String displayMsg = errorMsg;
+      if (errorMsg.contains('already registered')) {
+        displayMsg =
+            'This email is already registered. Please use a different email or log in.';
+      }
       messenger.showSnackBar(
-        SnackBar(content: Text(errorMsg), backgroundColor: Colors.red),
+        SnackBar(content: Text(displayMsg), backgroundColor: Colors.red),
       );
     } catch (_) {
       if (!mounted) return;

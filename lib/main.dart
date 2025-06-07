@@ -20,9 +20,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://tlurhtvopokteqoyjvyu.supabase.co',
+    url: 'https://nbvwlshvhclozmalypuo.supabase.co',
     anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRsdXJodHZvcG9rdGVxb3lqdnl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc1ODM4NDUsImV4cCI6MjA2MzE1OTg0NX0.WSzUGFSXXPvJD8IZpi1jDkIOrimV_nOoJ6_VewGed5g',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5idndsc2h2aGNsb3ptYWx5cHVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg5MDI1NTMsImV4cCI6MjA2NDQ3ODU1M30.KI0uT8QHwjMFv7IUqL5t28TzHJWy_N7A-1X_dqMXRk0',
   );
 
   runApp(const ProviderScope(child: MyApp()));
@@ -57,7 +57,7 @@ class AuthGate extends StatelessWidget {
     return StreamBuilder<AuthState>(
       stream: Supabase.instance.client.auth.onAuthStateChange,
       builder: (context, snapshot) {
-        final session = Supabase.instance.client.auth.currentSession;
+        final session = snapshot.data?.session;
         if (session != null) {
           return const HomeScreen();
         } else {
@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const List<Widget> _widgetOptions = <Widget>[
     ChatScreen(),
     WorkoutsScreen(),
-    ThemeTestScreen(),
+    MealsScreen(),
     ProfileScreen(),
   ];
 

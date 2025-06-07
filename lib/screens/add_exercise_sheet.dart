@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:nexafit/services/workout_service.dart';
 
 class AddExerciseSheet extends StatefulWidget {
   const AddExerciseSheet({super.key});
@@ -10,25 +12,55 @@ class AddExerciseSheet extends StatefulWidget {
 
 class _AddExerciseSheetState extends State<AddExerciseSheet> {
   final List<String> _selectedExercises = [];
+  final _workoutService = WorkoutService();
+  List<Map<String, dynamic>> _exerciseList = [];
+  bool _isLoading = true;
+  String? _searchQuery;
+  String? _selectedEquipment;
+  String? _selectedMuscle;
 
-  final List<Map<String, String>> _exerciseList = [
-    {"name": "Bench Press (Dumbbell)", "muscle": "Chest"},
-    {"name": "Pull Up (Assisted)", "muscle": "Lats"},
-    {"name": "Incline Chest Press (Machine)", "muscle": "Chest"},
-    {"name": "Seated Cable Row - Bar Wide Grip", "muscle": "Upper Back"},
-    {"name": "T Bar Row", "muscle": "Upper Back"},
-    {"name": "Rear Delt Reverse Fly (Machine)", "muscle": "Upper Back"},
-    {"name": "Lateral Raise (Dumbbell)", "muscle": "Shoulders"},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadExercises();
+  }
 
-  void _toggleSelection(String name) {
+  Future<void> _loadExercises() async {
+    try {
+      final exercises = await _workoutService.searchExercises(
+        query: _searchQuery,
+        equipment: _selectedEquipment,
+        bodyPart: _selectedMuscle,
+      );
+      setState(() {
+        _exerciseList = exercises;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error loading exercises: $e')));
+      }
+    }
+  }
+
+  void _toggleSelection(String id) {
     setState(() {
-      if (_selectedExercises.contains(name)) {
-        _selectedExercises.remove(name);
+      if (_selectedExercises.contains(id)) {
+        _selectedExercises.remove(id);
       } else {
-        _selectedExercises.add(name);
+        _selectedExercises.add(id);
       }
     });
+  }
+
+  String _getGifUrl(String? gifUrl) {
+    if (gifUrl == null) return '';
+    return Supabase.instance.client.storage
+        .from('exercises-gif')
+        .getPublicUrl(gifUrl);
   }
 
   @override
@@ -97,6 +129,10 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
                           borderSide: BorderSide.none,
                         ),
                       ),
+                      onChanged: (value) {
+                        setState(() => _searchQuery = value);
+                        _loadExercises();
+                      },
                     ),
                     const SizedBox(height: 12),
 
@@ -114,24 +150,29 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
 
                     // Exercise List
                     Expanded(
-                      child: ListView.builder(
-                        controller: scrollController,
-                        itemCount: _exerciseList.length,
-                        itemBuilder: (context, index) {
-                          final exercise = _exerciseList[index];
-                          final isSelected = _selectedExercises.contains(
-                            exercise['name'],
-                          );
-                          return GestureDetector(
-                            onTap: () => _toggleSelection(exercise['name']!),
-                            child: ExerciseTile(
-                              name: exercise['name']!,
-                              muscle: exercise['muscle']!,
-                              isSelected: isSelected,
-                            ),
-                          );
-                        },
-                      ),
+                      child:
+                          _isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : ListView.builder(
+                                controller: scrollController,
+                                itemCount: _exerciseList.length,
+                                itemBuilder: (context, index) {
+                                  final exercise = _exerciseList[index];
+                                  final isSelected = _selectedExercises
+                                      .contains(exercise['id']);
+                                  return GestureDetector(
+                                    onTap:
+                                        () => _toggleSelection(exercise['id']),
+                                    child: ExerciseTile(
+                                      name: exercise['name'],
+                                      muscle:
+                                          exercise['body_part'] ?? 'Unknown',
+                                      isSelected: isSelected,
+                                      gifUrl: _getGifUrl(exercise['gif_url']),
+                                    ),
+                                  );
+                                },
+                              ),
                     ),
                   ],
                 ),
@@ -148,7 +189,7 @@ class _AddExerciseSheetState extends State<AddExerciseSheet> {
             right: 24,
             child: FilledButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, _selectedExercises);
               },
               child: Text(
                 "Add ${_selectedExercises.length} Exercise${_selectedExercises.length > 1 ? 's' : ''}",
@@ -174,12 +215,14 @@ class ExerciseTile extends StatelessWidget {
   final String name;
   final String muscle;
   final bool isSelected;
+  final String gifUrl;
 
   const ExerciseTile({
     super.key,
     required this.name,
     required this.muscle,
     required this.isSelected,
+    required this.gifUrl,
   });
 
   @override
@@ -202,7 +245,11 @@ class ExerciseTile extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          child: const Icon(Icons.fitness_center, size: 20),
+          backgroundImage: gifUrl.isNotEmpty ? NetworkImage(gifUrl) : null,
+          child:
+              gifUrl.isEmpty
+                  ? const Icon(Icons.fitness_center, size: 20)
+                  : null,
         ),
         title: Text(
           name,

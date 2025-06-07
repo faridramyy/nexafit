@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:nexafit/screens/workout_log_screen.dart';
+import 'package:nexafit/services/workout_service.dart';
 import 'workout_set_tile.dart';
 
 class WorkoutSection extends StatefulWidget {
   final String exerciseTitle;
   final List<WorkoutSet> initialSets;
+  final String workoutExerciseId;
 
   const WorkoutSection({
     required this.exerciseTitle,
     required this.initialSets,
+    required this.workoutExerciseId,
     super.key,
   });
 
@@ -19,6 +22,7 @@ class WorkoutSection extends StatefulWidget {
 class _WorkoutSectionState extends State<WorkoutSection> {
   late List<WorkoutSet> sets;
   final TextEditingController _notesController = TextEditingController();
+  final _workoutService = WorkoutService();
 
   @override
   void initState() {
@@ -32,20 +36,75 @@ class _WorkoutSectionState extends State<WorkoutSection> {
     super.dispose();
   }
 
-  void addSet() {
-    final newSet = WorkoutSet(
-      setNumber: sets.length + 1,
-      previous: sets.isNotEmpty ? sets.last.previous : '0kg x 0',
-      weight: sets.isNotEmpty ? sets.last.weight : 0,
-      reps: sets.isNotEmpty ? sets.last.reps : 0,
-    );
-    setState(() => sets.add(newSet));
+  Future<void> addSet() async {
+    try {
+      final newSet = WorkoutSet(
+        setId: DateTime.now().millisecondsSinceEpoch.toString(), // Temporary ID
+        setNumber: sets.length + 1,
+        previous: sets.isNotEmpty ? sets.last.previous : '0kg x 0',
+        weight: sets.isNotEmpty ? sets.last.weight : 0,
+        reps: sets.isNotEmpty ? sets.last.reps : 0,
+      );
+
+      // Create set in database
+      final response =
+          await _workoutService.client
+              .from('sets')
+              .insert({
+                'workout_exercise_id': widget.workoutExerciseId,
+                'set_number': newSet.setNumber,
+                'weight': newSet.weight,
+                'reps': newSet.reps,
+              })
+              .select()
+              .single();
+
+      newSet.setId = response['id'];
+      setState(() => sets.add(newSet));
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error adding set: $e')));
+      }
+    }
   }
 
-  void toggleCheck(int index) {
-    setState(() {
-      sets[index].isCompleted = !sets[index].isCompleted;
-    });
+  Future<void> toggleCheck(int index) async {
+    try {
+      final set = sets[index];
+      await _workoutService.updateSet(
+        setId: set.setId,
+        weight: set.weight,
+        reps: set.reps,
+        completed: !set.isCompleted,
+      );
+      setState(() {
+        set.isCompleted = !set.isCompleted;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error updating set: $e')));
+      }
+    }
+  }
+
+  Future<void> updateSet(WorkoutSet set) async {
+    try {
+      await _workoutService.updateSet(
+        setId: set.setId,
+        weight: set.weight,
+        reps: set.reps,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error updating set: $e')));
+      }
+    }
   }
 
   @override
@@ -108,7 +167,7 @@ class _WorkoutSectionState extends State<WorkoutSection> {
                 color: Theme.of(context).colorScheme.primary,
                 size: 20,
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
               Text(
                 'Rest Timer: 2min 0s',
                 style: TextStyle(color: Theme.of(context).colorScheme.primary),
@@ -141,6 +200,7 @@ class _WorkoutSectionState extends State<WorkoutSection> {
             return WorkoutSetTile(
               set: set,
               onToggleComplete: () => toggleCheck(index),
+              onUpdate: () => updateSet(set),
             );
           }),
 

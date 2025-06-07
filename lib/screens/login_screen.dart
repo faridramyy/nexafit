@@ -48,8 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
         messenger.showSnackBar(
           const SnackBar(content: Text("Login successful!")),
         );
-
-        Navigator.pushNamed(context, AppRoutes.home);
+        // Let AuthGate handle navigation
+        // Navigator.pushNamed(context, AppRoutes.home);
       }
     } on AuthException catch (e) {
       if (!mounted) return;
