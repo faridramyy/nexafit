@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:nexafit/features/workouts/presentation/screens/create_routine_sheet.dart';
-import 'package:nexafit/features/workouts/presentation/screens/workout_log_screen.dart';
-import 'package:nexafit/features/workouts/presentation/widgets/primary_button.dart';
-import 'package:nexafit/features/workouts/presentation/widgets/routine_card.dart';
-import 'package:nexafit/features/workouts/presentation/widgets/section_title.dart';
+import 'package:nexafit/screens/create_routine_sheet.dart';
+import 'package:nexafit/screens/workout_log_screen.dart';
+import 'package:nexafit/widgets/primary_button.dart';
+import 'package:nexafit/widgets/routine_card.dart';
+import 'package:nexafit/widgets/section_title.dart';
 
 class WorkoutsScreen extends StatelessWidget {
   const WorkoutsScreen({super.key});

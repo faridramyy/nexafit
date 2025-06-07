@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nexafit/features/workouts/data/workout_set.dart';
 import '../widgets/workout_section.dart';
 
 class WorkoutLogScreen extends StatelessWidget {
@@ -52,3 +51,20 @@ class WorkoutLogScreen extends StatelessWidget {
     );
   }
 }
+
+class WorkoutSet {
+  final int setNumber;
+  final String previous;
+  double weight;
+  int reps;
+  bool isCompleted;
+
+  WorkoutSet({
+    required this.setNumber,
+    required this.previous,
+    required this.weight,
+    required this.reps,
+    this.isCompleted = false,
+  });
+}
+

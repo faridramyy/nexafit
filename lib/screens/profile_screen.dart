@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nexafit/core/constants/app_routes.dart';
-import 'package:nexafit/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:nexafit/routes/app_routes.dart';
+import 'package:nexafit/screens/edit_profile_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends StatelessWidget {

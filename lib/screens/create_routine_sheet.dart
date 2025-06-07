@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nexafit/features/workouts/presentation/screens/add_exercise_sheet.dart';
+import 'package:nexafit/screens/add_exercise_sheet.dart';
 
 class CreateRoutineSheet extends StatelessWidget {
   const CreateRoutineSheet({super.key});

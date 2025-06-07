@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nexafit/features/workouts/data/workout_set.dart';
+import 'package:nexafit/screens/workout_log_screen.dart';
 import 'workout_set_tile.dart';
 
 class WorkoutSection extends StatefulWidget {

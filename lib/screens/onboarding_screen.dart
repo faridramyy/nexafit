@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
-import 'package:nexafit/core/constants/app_routes.dart';
+import 'package:nexafit/routes/app_routes.dart';
 
 class OnBoarding extends StatelessWidget {
   const OnBoarding({super.key});

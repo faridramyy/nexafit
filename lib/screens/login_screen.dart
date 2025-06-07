@@ -1,38 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:nexafit/core/constants/app_routes.dart';
-import 'package:nexafit/features/auth/presentation/widgets/text_field.dart';
+import 'package:nexafit/routes/app_routes.dart';
+import 'package:nexafit/widgets/text_field.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
 
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
   bool _isLoading = false;
 
   @override
   void dispose() {
-    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleSignUp() async {
+  Future<void> _handleLogin() async {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) return;
 
@@ -43,7 +37,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await Supabase.instance.client.auth.signUp(
+      final response = await Supabase.instance.client.auth.signInWithPassword(
         email: email,
         password: password,
       );
@@ -52,19 +46,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (response.user != null) {
         messenger.showSnackBar(
-          const SnackBar(
-            content: Text("Sign up successful! Please check your email."),
-          ),
+          const SnackBar(content: Text("Login successful!")),
         );
 
-        await Future.delayed(const Duration(seconds: 2));
-        // Navigate to the home screen
+        Navigator.pushNamed(context, AppRoutes.home);
       }
     } on AuthException catch (e) {
       if (!mounted) return;
-      final errorMsg = e.message;
       messenger.showSnackBar(
-        SnackBar(content: Text(errorMsg), backgroundColor: Colors.red),
+        SnackBar(content: Text(e.message), backgroundColor: Colors.red),
       );
     } catch (_) {
       if (!mounted) return;
@@ -96,21 +86,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 32),
 
-                // Username
-                buildTextField(
-                  label: 'Username',
-                  icon: const Icon(Icons.person),
-                  controller: _usernameController,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Username is required';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Email
                 buildTextField(
                   label: 'Email',
                   icon: const Icon(Icons.email),
@@ -129,7 +104,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Password
                 buildTextField(
                   label: 'Password',
                   icon: const Icon(Icons.lock),
@@ -151,63 +125,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Password is required';
                     }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
 
-                // Confirm Password
-                buildTextField(
-                  label: 'Confirm Password',
-                  icon: const Icon(Icons.lock_outline),
-                  controller: _confirmPasswordController,
-                  obscure: _obscureConfirmPassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureConfirmPassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
                     onPressed: () {
-                      setState(() {
-                        _obscureConfirmPassword = !_obscureConfirmPassword;
-                      });
+                      Navigator.pushNamed(context, AppRoutes.forgotPassword);
                     },
+                    child: const Text("Forgot Password?"),
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please confirm your password';
-                    }
-                    if (value != _passwordController.text.trim()) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
                 ),
+
                 const SizedBox(height: 24),
 
                 _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : FilledButton(
-                      onPressed: _handleSignUp,
-                      child: const Text('Sign Up'),
+                      onPressed: _handleLogin,
+                      child: const Text('Login'),
                     ),
                 const SizedBox(height: 16),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Already have an account? "),
+                    const Text("Don't have an account? "),
                     TextButton(
                       onPressed:
                           () => Navigator.pushReplacementNamed(
                             context,
-                            AppRoutes.login,
+                            AppRoutes.signup,
                           ),
-                      child: const Text("Login"),
+                      child: const Text("Sign Up"),
                     ),
                   ],
                 ),
@@ -227,18 +180,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 OutlinedButton.icon(
                   icon: const Icon(Icons.g_mobiledata),
-                  label: const Text("Sign up with Google"),
+                  label: const Text("Login with Google"),
                   onPressed: () {
-                    // Add Google signup logic
+                    // Add Google login logic
                   },
                 ),
                 const SizedBox(height: 12),
 
                 OutlinedButton.icon(
                   icon: const Icon(Icons.apple),
-                  label: const Text("Sign up with Apple"),
+                  label: const Text("Login with Apple"),
                   onPressed: () {
-                    // Add Apple signup logic
+                    // Add Apple login logic
                   },
                 ),
               ],

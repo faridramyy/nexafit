@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:nexafit/core/constants/app_routes.dart';
-import 'package:nexafit/core/theme/theme.dart';
-import 'package:nexafit/features/ThemeTestScreen/presentation/screens/theme_test_screen.dart';
-import 'package:nexafit/features/auth/presentation/screens/forgot_password_screen.dart';
-import 'package:nexafit/features/auth/presentation/screens/login_screen.dart';
-import 'package:nexafit/features/auth/presentation/screens/signup_screen.dart';
-import 'package:nexafit/features/chat/presentation/screens/chat_screen.dart';
-import 'package:nexafit/features/meals/presentation/screens/meals_screen.dart';
-import 'package:nexafit/features/onboarding/presentation/screens/onboarding_screen.dart';
-import 'package:nexafit/features/profile/presentation/screens/profile_screen.dart';
-import 'package:nexafit/features/workouts/presentation/screens/workouts_screen.dart';
+import 'package:nexafit/routes/app_routes.dart';
+import 'package:nexafit/theme/theme.dart';
+import 'package:nexafit/screens/theme_test_screen.dart';
+import 'package:nexafit/screens/forgot_password_screen.dart';
+import 'package:nexafit/screens/login_screen.dart';
+import 'package:nexafit/screens/signup_screen.dart';
+import 'package:nexafit/screens/chat_screen.dart';
+import 'package:nexafit/screens/meals_screen.dart';
+import 'package:nexafit/screens/onboarding_screen.dart';
+import 'package:nexafit/screens/profile_screen.dart';
+import 'package:nexafit/screens/workouts_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
 
 Future<void> main() async {
@@ -24,7 +25,7 @@ Future<void> main() async {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRsdXJodHZvcG9rdGVxb3lqdnl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc1ODM4NDUsImV4cCI6MjA2MzE1OTg0NX0.WSzUGFSXXPvJD8IZpi1jDkIOrimV_nOoJ6_VewGed5g',
   );
 
-  runApp(MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

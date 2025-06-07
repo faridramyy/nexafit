@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nexafit/features/chat/presentation/widgets/chat_bubble_ai_reply.dart';
-import 'package:nexafit/features/chat/presentation/widgets/chat_bubble_reply.dart';
-import 'package:nexafit/features/chat/presentation/widgets/chat_input_bar.dart';
+import 'package:nexafit/widgets/chat_bubble_ai_reply.dart';
+import 'package:nexafit/widgets/chat_bubble_reply.dart';
+import 'package:nexafit/widgets/chat_input_bar.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});

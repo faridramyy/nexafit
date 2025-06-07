@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nexafit/features/auth/presentation/widgets/text_field.dart';
+import 'package:nexafit/widgets/text_field.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
