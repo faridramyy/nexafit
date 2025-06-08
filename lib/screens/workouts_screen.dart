@@ -125,6 +125,13 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
               child:
                   _isLoading
                       ? const Center(child: CircularProgressIndicator())
+                      : _routines.isEmpty
+                      ? const Center(
+                        child: Text(
+                          'No routines yet',
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                        ),
+                      )
                       : ListView.builder(
                         itemCount: _routines.length,
                         itemBuilder: (context, index) {
@@ -191,13 +198,71 @@ class _WorkoutsScreenState extends State<WorkoutsScreen> {
                                 await _workoutService.deleteRoutine(
                                   routine['id'],
                                 );
-                                _loadRoutines(); // Reload the list after deletion
+                                _loadRoutines();
                               } catch (e) {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
                                         'Error deleting routine: $e',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            onEditPressed: () async {
+                              await showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder:
+                                    (_) => CreateRoutineSheet(
+                                      routineId: routine['id'],
+                                      initialName: routine['name'],
+                                      initialExercises:
+                                          (routine['routine_exercises'] as List)
+                                              .map((e) {
+                                                return {
+                                                  'id': e['exercise_id'],
+                                                  'name': e['exercise']['name'],
+                                                  'body_part':
+                                                      e['exercise']['body_part'],
+                                                  'gif_url':
+                                                      e['exercise']['gif_url'],
+                                                  'sets':
+                                                      e['default_sets'] ?? 3,
+                                                  'reps':
+                                                      e['default_reps'] ?? 10,
+                                                  'weight':
+                                                      e['default_weight'] ?? 0,
+                                                };
+                                              })
+                                              .toList(),
+                                    ),
+                              );
+                              _loadRoutines();
+                            },
+                            onDuplicatePressed: () async {
+                              try {
+                                await _workoutService.duplicateRoutine(
+                                  routine['id'],
+                                );
+                                _loadRoutines();
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Routine duplicated successfully',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Error duplicating routine: $e',
                                       ),
                                     ),
                                   );

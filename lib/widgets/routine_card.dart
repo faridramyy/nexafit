@@ -5,12 +5,16 @@ class RoutineCard extends StatelessWidget {
   final String exercises;
   final VoidCallback onStartPressed;
   final VoidCallback onDeletePressed;
+  final VoidCallback onEditPressed;
+  final VoidCallback onDuplicatePressed;
 
   const RoutineCard({
     required this.title,
     required this.exercises,
     required this.onStartPressed,
     required this.onDeletePressed,
+    required this.onEditPressed,
+    required this.onDuplicatePressed,
     super.key,
   });
 
@@ -67,6 +71,10 @@ class RoutineCard extends StatelessWidget {
                               ],
                             ),
                       );
+                    } else if (value == 'edit') {
+                      onEditPressed();
+                    } else if (value == 'duplicate') {
+                      onDuplicatePressed();
                     }
                   },
                   itemBuilder:

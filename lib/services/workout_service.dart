@@ -81,6 +81,94 @@ class WorkoutService {
     }
   }
 
+  Future<void> updateRoutine({
+    required String routineId,
+    required String name,
+    required List<Map<String, dynamic>> exercises,
+  }) async {
+    try {
+      final userId = client.auth.currentUser?.id;
+      if (userId == null) throw Exception('User not authenticated');
+
+      // Update routine name
+      await client
+          .from('workout_routines')
+          .update({'name': name})
+          .eq('id', routineId)
+          .eq('user_id', userId);
+
+      // Delete existing exercises
+      await client
+          .from('routine_exercises')
+          .delete()
+          .eq('routine_id', routineId);
+
+      // Add new exercises
+      for (var i = 0; i < exercises.length; i++) {
+        final exercise = exercises[i];
+        await client.from('routine_exercises').insert({
+          'routine_id': routineId,
+          'exercise_id': exercise['exercise_id'],
+          'order_index': i,
+          'default_sets': exercise['sets'],
+          'default_reps': exercise['reps'],
+          'default_weight': exercise['weight'],
+        });
+      }
+    } catch (e) {
+      print('Error updating routine: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> duplicateRoutine(String routineId) async {
+    try {
+      final userId = client.auth.currentUser?.id;
+      if (userId == null) throw Exception('User not authenticated');
+
+      // Get the original routine
+      final routineResponse =
+          await client
+              .from('workout_routines')
+              .select('*, routine_exercises(*)')
+              .eq('id', routineId)
+              .single();
+
+      // Create new routine with "(Copy)" suffix
+      final newRoutineResponse =
+          await client
+              .from('workout_routines')
+              .insert({
+                'user_id': userId,
+                'name': '${routineResponse['name']} (Copy)',
+                'description': routineResponse['description'],
+              })
+              .select()
+              .single();
+
+      final newRoutineId = newRoutineResponse['id'];
+
+      // Copy all exercises
+      final exercises = routineResponse['routine_exercises'] as List;
+      for (var i = 0; i < exercises.length; i++) {
+        final exercise = exercises[i];
+        await client.from('routine_exercises').insert({
+          'routine_id': newRoutineId,
+          'exercise_id': exercise['exercise_id'],
+          'order_index': i,
+          'default_sets': exercise['default_sets'],
+          'default_reps': exercise['default_reps'],
+          'default_weight': exercise['default_weight'],
+        });
+      }
+
+      return newRoutineId;
+    } catch (e) {
+      print('Error duplicating routine: $e');
+      rethrow;
+    }
+  }
+
   // Workouts
   Future<String> createWorkout({
     required DateTime date,

@@ -4,7 +4,16 @@ import 'package:nexafit/services/workout_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CreateRoutineSheet extends StatefulWidget {
-  const CreateRoutineSheet({super.key});
+  final String? routineId;
+  final String? initialName;
+  final List<Map<String, dynamic>>? initialExercises;
+
+  const CreateRoutineSheet({
+    this.routineId,
+    this.initialName,
+    this.initialExercises,
+    super.key,
+  });
 
   @override
   State<CreateRoutineSheet> createState() => _CreateRoutineSheetState();
@@ -21,6 +30,12 @@ class _CreateRoutineSheetState extends State<CreateRoutineSheet> {
   void initState() {
     super.initState();
     _loadExercises();
+    if (widget.initialName != null) {
+      _titleController.text = widget.initialName!;
+    }
+    if (widget.initialExercises != null) {
+      _selectedExercises = List.from(widget.initialExercises!);
+    }
   }
 
   Future<void> _loadExercises() async {
@@ -62,18 +77,34 @@ class _CreateRoutineSheetState extends State<CreateRoutineSheet> {
     setState(() => _isLoading = true);
 
     try {
-      await _workoutService.createRoutine(
-        name: _titleController.text.trim(),
-        exercises:
-            _selectedExercises.map((exercise) {
-              return {
-                'exercise_id': exercise['id'],
-                'sets': 3, // Default sets
-                'reps': 10, // Default reps
-                'weight': 0, // Default weight
-              };
-            }).toList(),
-      );
+      if (widget.routineId != null) {
+        await _workoutService.updateRoutine(
+          routineId: widget.routineId!,
+          name: _titleController.text.trim(),
+          exercises:
+              _selectedExercises.map((exercise) {
+                return {
+                  'exercise_id': exercise['id'],
+                  'sets': exercise['sets'] ?? 3,
+                  'reps': exercise['reps'] ?? 10,
+                  'weight': exercise['weight'] ?? 0,
+                };
+              }).toList(),
+        );
+      } else {
+        await _workoutService.createRoutine(
+          name: _titleController.text.trim(),
+          exercises:
+              _selectedExercises.map((exercise) {
+                return {
+                  'exercise_id': exercise['id'],
+                  'sets': exercise['sets'] ?? 3,
+                  'reps': exercise['reps'] ?? 10,
+                  'weight': exercise['weight'] ?? 0,
+                };
+              }).toList(),
+        );
+      }
 
       if (mounted) {
         Navigator.pop(context);
@@ -82,7 +113,7 @@ class _CreateRoutineSheetState extends State<CreateRoutineSheet> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error creating routine: $e')));
+        ).showSnackBar(SnackBar(content: Text('Error saving routine: $e')));
       }
     } finally {
       if (mounted) {
@@ -136,7 +167,9 @@ class _CreateRoutineSheetState extends State<CreateRoutineSheet> {
                         ),
                       ),
                       Text(
-                        'Create Routine',
+                        widget.routineId != null
+                            ? 'Edit Routine'
+                            : 'Create Routine',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 16,
