@@ -20,10 +20,15 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // Add initial greeting message
-    _messages.add({
-      'role': 'assistant',
-      'content': 'Hi! How can I help you today?',
+    _isLoading = true;
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        _messages.add({
+          'role': 'assistant',
+          'content': 'Hi! How can I help you today?',
+        });
+        _isLoading = false;
+      });
     });
   }
 
