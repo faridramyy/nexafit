@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:nexafit/services/workout_service.dart';
 
 class ExerciseDetailsScreen extends StatefulWidget {
-  final Map<String, dynamic> exercise;
+  final String exerciseId;
 
-  const ExerciseDetailsScreen({super.key, required this.exercise});
+  const ExerciseDetailsScreen({super.key, required this.exerciseId});
 
   @override
   _ExerciseDetailsScreenState createState() => _ExerciseDetailsScreenState();
@@ -13,11 +14,37 @@ class ExerciseDetailsScreen extends StatefulWidget {
 class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final _workoutService = WorkoutService();
+  Map<String, dynamic>? _exercise;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadExerciseDetails();
+  }
+
+  Future<void> _loadExerciseDetails() async {
+    try {
+      final exercises = await _workoutService.searchExercises();
+      final exercise = exercises.firstWhere(
+        (e) => e['id'] == widget.exerciseId,
+        orElse: () => throw Exception('Exercise not found'),
+      );
+
+      setState(() {
+        _exercise = exercise;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error loading exercise: $e')));
+      }
+    }
   }
 
   @override
@@ -35,10 +62,24 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(leading: BackButton()),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_exercise == null) {
+      return Scaffold(
+        appBar: AppBar(leading: BackButton()),
+        body: Center(child: Text('Exercise not found')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(),
-        title: Text(widget.exercise['name']),
+        title: Text(_exercise!['name']),
         actions: [
           IconButton(icon: Icon(Icons.share), onPressed: () {}),
           IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
@@ -74,7 +115,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
             color: Colors.white,
             child: Center(
               child: Image.network(
-                _getGifUrl(widget.exercise['gif_url']),
+                _getGifUrl(_exercise!['gif_url']),
                 height: 180,
                 errorBuilder: (context, error, stackTrace) {
                   return Icon(
@@ -88,24 +129,24 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
           ),
           SizedBox(height: 16),
           Text(
-            widget.exercise['name'],
+            _exercise!['name'],
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
           Text(
-            'Primary: ${widget.exercise['body_part'] ?? 'Unknown'}',
+            'Primary: ${_exercise!['body_part'] ?? 'Unknown'}',
             style: TextStyle(color: Colors.grey),
           ),
           Text(
-            'Secondary: ${widget.exercise['body_part'] ?? 'Unknown'}',
+            'Secondary: ${_exercise!['body_part'] ?? 'Unknown'}',
             style: TextStyle(color: Colors.grey),
           ),
           Text(
-            'Equipment: ${widget.exercise['equipment'] ?? 'Unknown'}',
+            'Equipment: ${_exercise!['equipment'] ?? 'Unknown'}',
             style: TextStyle(color: Colors.grey),
           ),
           Text(
-            'Target: ${widget.exercise['target'] ?? 'Unknown'}',
+            'Target: ${_exercise!['target'] ?? 'Unknown'}',
             style: TextStyle(color: Colors.grey),
           ),
           SizedBox(height: 16),
@@ -140,7 +181,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
   }
 
   Widget _buildHowToTab() {
-    final instructions = widget.exercise['exercise_instructions'] as List?;
+    final instructions = _exercise!['exercise_instructions'] as List?;
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(16),
@@ -152,7 +193,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
             color: Colors.white,
             child: Center(
               child: Image.network(
-                _getGifUrl(widget.exercise['gif_url']),
+                _getGifUrl(_exercise!['gif_url']),
                 height: 180,
                 errorBuilder: (context, error, stackTrace) {
                   return Icon(
@@ -166,7 +207,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
           ),
           SizedBox(height: 16),
           Text(
-            widget.exercise['name'],
+            _exercise!['name'],
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),

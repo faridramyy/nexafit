@@ -74,8 +74,9 @@ class _WorkoutSectionState extends State<WorkoutSection> {
                     context,
                     MaterialPageRoute(
                       builder:
-                          (context) =>
-                              ExerciseDetailsScreen(exercise: widget.exercise),
+                          (context) => ExerciseDetailsScreen(
+                            exerciseId: widget.exercise['id'],
+                          ),
                     ),
                   );
                 },
@@ -102,7 +103,7 @@ class _WorkoutSectionState extends State<WorkoutSection> {
                       MaterialPageRoute(
                         builder:
                             (context) => ExerciseDetailsScreen(
-                              exercise: widget.exercise,
+                              exerciseId: widget.exercise['id'],
                             ),
                       ),
                     );

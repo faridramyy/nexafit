@@ -69,7 +69,9 @@ class ExerciseTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ExerciseDetailsScreen(exercise: exercise),
+                builder:
+                    (context) =>
+                        ExerciseDetailsScreen(exerciseId: exercise['id']),
               ),
             );
           },
