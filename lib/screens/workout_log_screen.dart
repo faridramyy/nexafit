@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nexafit/services/workout_service.dart';
-import '../widgets/workout_section.dart';
+import '../widgets/workout_log_section.dart';
 
 class WorkoutLogScreen extends StatefulWidget {
   final String workoutId;
@@ -89,8 +89,9 @@ class _WorkoutLogScreenState extends State<WorkoutLogScreen> {
 
                   return WorkoutSection(
                     exerciseTitle: exercise['exercise']['name'],
-                    initialSets: sets,
+                    sets: sets,
                     workoutExerciseId: exercise['id'],
+                    exercise: exercise['exercise'],
                   );
                 },
               ),

@@ -41,7 +41,7 @@ class ExerciseTile extends StatelessWidget {
           backgroundImage: gifUrl.isNotEmpty ? NetworkImage(gifUrl) : null,
           child:
               gifUrl.isEmpty
-                  ? const Icon(Icons.fitness_center, size: 20)
+                  ? Icon(Icons.fitness_center, size: 20, color: Colors.green)
                   : null,
         ),
         title: Text(

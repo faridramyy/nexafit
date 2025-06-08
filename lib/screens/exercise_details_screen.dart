@@ -80,7 +80,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                   return Icon(
                     Icons.fitness_center,
                     size: 180,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Colors.green,
                   );
                 },
               ),
@@ -158,7 +158,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                   return Icon(
                     Icons.fitness_center,
                     size: 180,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Colors.green,
                   );
                 },
               ),
@@ -176,7 +176,7 @@ class _ExerciseDetailsScreenState extends State<ExerciseDetailsScreen>
                 entry.key + 1,
                 entry.value['instruction'] as String,
               );
-            }).toList()
+            })
           else
             Text('No instructions available'),
         ],
