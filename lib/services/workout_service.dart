@@ -1,7 +1,9 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:nexafit/services/exercise_cache_service.dart';
 
 class WorkoutService {
   final SupabaseClient client = Supabase.instance.client;
+  final _cacheService = ExerciseCacheService();
 
   // Workout Routines
   Future<List<Map<String, dynamic>>> getRoutines() async {
@@ -299,6 +301,18 @@ class WorkoutService {
     String? target,
   }) async {
     try {
+      // Try to get from cache first if no filters are applied
+      if (query == null &&
+          bodyPart == null &&
+          equipment == null &&
+          target == null) {
+        final cachedExercises = await _cacheService.getCachedExercises();
+        if (cachedExercises != null) {
+          return cachedExercises;
+        }
+      }
+
+      // If no cache or filters applied, fetch from database
       var request = client
           .from('exercises')
           .select('*, exercise_secondary_muscles(*), exercise_instructions(*)');
@@ -317,9 +331,29 @@ class WorkoutService {
       }
 
       final response = await request;
-      return List<Map<String, dynamic>>.from(response);
+      final exercises = List<Map<String, dynamic>>.from(response);
+
+      // Cache the results if no filters were applied
+      if (query == null &&
+          bodyPart == null &&
+          equipment == null &&
+          target == null) {
+        await _cacheService.cacheExercises(exercises);
+      }
+
+      return exercises;
     } catch (e) {
       print('Error searching exercises: $e');
+      // If database fetch fails, try to get from cache
+      if (query == null &&
+          bodyPart == null &&
+          equipment == null &&
+          target == null) {
+        final cachedExercises = await _cacheService.getCachedExercises();
+        if (cachedExercises != null) {
+          return cachedExercises;
+        }
+      }
       return [];
     }
   }
