@@ -6,15 +6,45 @@ class ProfileService {
   Future<Map<String, dynamic>?> getProfile() async {
     try {
       final userId = _client.auth.currentUser?.id;
-      if (userId == null) return null;
+      if (userId == null) {
+        print(
+          'Error fetching profile: No user ID found - User might not be authenticated',
+        );
+        return null;
+      }
+
+      print('Attempting to fetch profile for user ID: $userId');
+
+      // First check if the profile exists
+      final exists =
+          await _client
+              .from('profiles')
+              .select('id')
+              .eq('id', userId)
+              .maybeSingle();
+
+      if (exists == null) {
+        print('No profile found for user $userId - Creating new profile');
+        // Create a new profile if it doesn't exist
+        final newProfile =
+            await _client
+                .from('profiles')
+                .insert({'id': userId})
+                .select()
+                .single();
+        print('Created new profile: $newProfile');
+        return newProfile;
+      }
 
       final response =
           await _client.from('profiles').select().eq('id', userId).single();
 
+      print('Successfully fetched profile for user $userId: $response');
       return response;
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Error fetching profile: $e');
-      return null;
+      print('Stack trace: $stackTrace');
+      rethrow;
     }
   }
 
@@ -31,7 +61,9 @@ class ProfileService {
   }) async {
     try {
       final userId = _client.auth.currentUser?.id;
-      if (userId == null) throw Exception('User not authenticated');
+      if (userId == null) {
+        throw Exception('User not authenticated');
+      }
 
       final updates = {
         if (username != null) 'username': username,
@@ -46,9 +78,41 @@ class ProfileService {
           'training_days_per_week': trainingDaysPerWeek,
       };
 
-      await _client.from('profiles').update(updates).eq('id', userId);
-    } catch (e) {
+      print('Updating profile for user $userId with data: $updates');
+
+      // First check if the profile exists
+      final exists =
+          await _client
+              .from('profiles')
+              .select('id')
+              .eq('id', userId)
+              .maybeSingle();
+
+      if (exists == null) {
+        print('No profile found for user $userId - Creating new profile');
+        // Create a new profile with the updates
+        final newProfile =
+            await _client
+                .from('profiles')
+                .insert({...updates, 'id': userId})
+                .select()
+                .single();
+        print('Created new profile: $newProfile');
+        return;
+      }
+
+      final response =
+          await _client
+              .from('profiles')
+              .update(updates)
+              .eq('id', userId)
+              .select()
+              .single();
+
+      print('Successfully updated profile: $response');
+    } catch (e, stackTrace) {
       print('Error updating profile: $e');
+      print('Stack trace: $stackTrace');
       rethrow;
     }
   }
