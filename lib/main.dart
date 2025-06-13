@@ -65,7 +65,7 @@ class AuthGate extends StatelessWidget {
         if (session != null) {
           return const HomeScreen();
         } else {
-          return const LoginScreen();
+          return const OnBoarding();
         }
       },
     );
