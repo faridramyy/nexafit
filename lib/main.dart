@@ -14,6 +14,7 @@ import 'package:nexafit/screens/profile_screen.dart';
 import 'package:nexafit/screens/workouts_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nexafit/services/theme_service.dart';
 import 'dart:ui';
 
 Future<void> main() async {
@@ -28,15 +29,18 @@ Future<void> main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeServiceProvider);
+
     return MaterialApp(
       title: 'Nexafit',
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
+      themeMode: themeMode,
       home: const AuthGate(),
       routes: {
         AppRoutes.themeTest: (_) => const ThemeTestScreen(),

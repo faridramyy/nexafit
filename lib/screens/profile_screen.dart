@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:nexafit/routes/app_routes.dart';
 import 'package:nexafit/screens/edit_profile_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nexafit/services/theme_service.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -57,19 +59,55 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             const Divider(height: 32),
-            const _ProfileOption(icon: Icons.settings, label: 'Settings'),
-            const _ProfileOption(
-              icon: Icons.security,
-              label: 'Privacy & Security',
-            ),
-            const _ProfileOption(
-              icon: Icons.notifications,
-              label: 'Notifications',
-            ),
-            const _ProfileOption(icon: Icons.star, label: 'Upgrade to Premium'),
-            const _ProfileOption(
-              icon: Icons.help_outline,
-              label: 'Help & Support',
+
+            // Theme Option
+            _ProfileOption(
+              icon: Icons.palette,
+              label: 'Theme',
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder:
+                      (context) => AlertDialog(
+                        title: const Text('Choose Theme'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              title: const Text('Light'),
+                              leading: const Icon(Icons.light_mode),
+                              onTap: () {
+                                ref
+                                    .read(themeServiceProvider.notifier)
+                                    .setThemeMode(ThemeMode.light);
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ListTile(
+                              title: const Text('Dark'),
+                              leading: const Icon(Icons.dark_mode),
+                              onTap: () {
+                                ref
+                                    .read(themeServiceProvider.notifier)
+                                    .setThemeMode(ThemeMode.dark);
+                                Navigator.pop(context);
+                              },
+                            ),
+                            ListTile(
+                              title: const Text('System'),
+                              leading: const Icon(Icons.settings_suggest),
+                              onTap: () {
+                                ref
+                                    .read(themeServiceProvider.notifier)
+                                    .setThemeMode(ThemeMode.system);
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                );
+              },
             ),
 
             // ✅ Logout button with Supabase
@@ -100,7 +138,6 @@ class ProfileScreen extends StatelessWidget {
                 if (confirm == true) {
                   final supabase = Supabase.instance.client;
                   await supabase.auth.signOut();
-
                   Navigator.pushNamed(context, AppRoutes.login);
                 }
               },
