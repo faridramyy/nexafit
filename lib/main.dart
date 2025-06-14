@@ -42,6 +42,7 @@ class MyApp extends ConsumerWidget {
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
       home: const AuthGate(),
+      debugShowCheckedModeBanner: false,
       routes: {
         AppRoutes.themeTest: (_) => const ThemeTestScreen(),
         AppRoutes.onboarding: (_) => const OnBoarding(),

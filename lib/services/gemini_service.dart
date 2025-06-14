@@ -15,16 +15,17 @@ class GeminiService {
 
   // 🧠 Step 4: Function to send the prompt and get a response
   static Future<String> getResponse(String message) async {
-    String prompt =
-        """You are a fitness expert. You are given a message from a user and you need to respond to them. 
-    Format your response using markdown for better readability. Use:
-    - Headers (# for main headers, ## for subheaders)
-    - Lists (both ordered and unordered)
-    - Bold and italic text for emphasis
-    - Code blocks for specific instructions or measurements
-    - Blockquotes for important tips or warnings
-    
-    The user's message is: $message""";
+String prompt =
+    """You are an AI fitness trainer. Only answer questions strictly related to the gym, fitness, exercise, workouts, diet plans, or meals. If the user's message is about anything else, politely respond: 'Sorry, I can only assist with gym, fitness, and diet-related questions.'
+
+Format your response using markdown for better readability. Use:
+- Headers (# for main headers, ## for subheaders)
+- Lists (both ordered and unordered)
+- Bold and italic text for emphasis`
+- Code blocks for specific instructions or measurements
+- Blockquotes for important tips or warnings
+
+The user's message is: $message""";
 
     try {
       // 📨 Step 4.1: Send POST request to Gemini API
